@@ -277,22 +277,35 @@ async function run (cmd, arg0, arg1, arg2, arg3, arg4) {
         let child;
 
         switch (process.platform) {
-            case "darwin": //unix 
-            child = cp.spawn(__dirname + '/tools/linux/ecs_save', [arg0, arg1, arg2, arg3, 'sylixos', __dirname + '/tools/linux/tar']);
-            child.stdout.on('data', (data) => {
-                console.log(`${data}`);
-            });
+            case "linux": //linux 
+            
+                fs.chmod(__dirname + '/tools/linux/ecs_save', fs.constants.S_IXUSR, function(err) {
+                    if (err) {
+                        console.log(`+ chmod ecs_save fail, ${err}`);
+                    }
+                });
+
+                fs.chmod(__dirname + '/tools/linux/tar', fs.constants.S_IXUSR, function(err) {
+                    if (err) {
+                        console.log(`+ chmod tar fail, ${err}`);
+                    }
+                });
+
+                child = cp.spawn(__dirname + '/tools/linux/ecs_save', [arg0, arg1, arg2, arg3, 'sylixos', __dirname + '/tools/linux/tar']);
+                child.stdout.on('data', (data) => {
+                    console.log(`${data}`);
+                });
             break;
 
             case "win32": //windows 
-            child = cp.spawn(__dirname + '/tools/windows/ecs_save.exe', [arg0, arg1, arg2, arg3, 'sylixos', __dirname + '/tools/windows/tar.exe']);
-            child.stdout.on('data', (data) => {
-                console.log(`${data}`);
-            });
+                child = cp.spawn(__dirname + '/tools/windows/ecs_save.exe', [arg0, arg1, arg2, arg3, 'sylixos', __dirname + '/tools/windows/tar.exe']);
+                child.stdout.on('data', (data) => {
+                    console.log(`${data}`);
+                });
             break;
         
             default:
-                throw new Error('OS not support.')
+                throw new Error('OS ' + process.platform + ' not support.');
         }
 
         break;
