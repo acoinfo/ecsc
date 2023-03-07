@@ -156,7 +156,7 @@ function mkdirs(dirname, callback) {
 }
 
 function copy(destdir, arch) {
-    var src = './template/' + arch + '/bin/javascript';
+    var src = __dirname + '/template/' + arch + '/bin/javascript';
     fs.createReadStream(src).pipe(fs.createWriteStream(destdir));
 }
 
@@ -274,7 +274,7 @@ async function run (cmd, arg0, arg1, arg2, arg3, arg4) {
             break;
         }
 
-        let child = cp.spawn('./ecs_save.exe', [arg0, arg1, arg2, arg3]);
+        let child = cp.spawn(__dirname + '/ecs_save.exe', [arg0, arg1, arg2, arg3, 'sylixos', __dirname + '/tar.exe']);
         child.stdout.on('data', (data) => {
             console.log(`${data}`);
         });
