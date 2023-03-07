@@ -244,7 +244,7 @@ async function run (cmd, arg0, arg1, arg2, arg3, arg4) {
                 console.log('> create ' + BUNDLE + '/config.json success!');
 
                 for (let i = 0; i < bundle.length; i++) {
-                    mkdirs(BUNDLE + '/rootfs' + bundle[i], () => {console.log('create ' + BUNDLE + '/rootfs' + bundle[i] + ' success')});
+                    mkdirs(BUNDLE + '/rootfs' + bundle[i], () => {console.log('> create ' + BUNDLE + '/rootfs' + bundle[i] + ' success')});
                 }
 
                 mkdirs(BUNDLE + '/rootfs/etc', () => {
@@ -269,15 +269,32 @@ async function run (cmd, arg0, arg1, arg2, arg3, arg4) {
 
     case 'pack':
         if (arg0 == undefined) {
-            console.log('Usage: node ecs.js pack tarballPath bundle name label');
-            console.log('  example: node ecs.js pack demo.tar demo example latest');
+            console.log('Usage: ecsc pack tarballPath bundle name label');
+            console.log('   e.g.: ecsc pack demo.tar demo example latest');
             break;
         }
 
-        let child = cp.spawn(__dirname + '/ecs_save.exe', [arg0, arg1, arg2, arg3, 'sylixos', __dirname + '/tar.exe']);
-        child.stdout.on('data', (data) => {
-            console.log(`${data}`);
-        });
+        let child;
+
+        switch (process.platform) {
+            case "darwin": //unix 
+            child = cp.spawn(__dirname + '/tools/linux/ecs_save', [arg0, arg1, arg2, arg3, 'sylixos', __dirname + '/tools/linux/tar']);
+            child.stdout.on('data', (data) => {
+                console.log(`${data}`);
+            });
+            break;
+
+            case "win32": //windows 
+            child = cp.spawn(__dirname + '/tools/windows/ecs_save.exe', [arg0, arg1, arg2, arg3, 'sylixos', __dirname + '/tools/windows/tar.exe']);
+            child.stdout.on('data', (data) => {
+                console.log(`${data}`);
+            });
+            break;
+        
+            default:
+                throw new Error('OS not support.')
+        }
+
         break;
 
       default:
@@ -286,6 +303,14 @@ async function run (cmd, arg0, arg1, arg2, arg3, arg4) {
 }
 
 run(process.argv[2], process.argv[3], process.argv[4], process.argv[5], process.argv[6], process.argv[7])
-	.catch(err => {
-		console.error('Fetch ERROR:', err.message, err.status)
+    .catch(err => {
+        console.log('Usage: ecsc [command] [arguments]');
+        console.log('  command: ');
+        console.log('    create [-f EcsFile]:  create an image bundle');
+        console.log('       e.g.: ecsc create');
+        console.log('       e.g.: ecsc create -f EcsFile');
+        console.log('    pack tarballPath bundle name label:  pack an image bundle');
+        console.log('       e.g.: ecsc pack demo.tar demo example latest');
+
+        console.error('Fetch ERROR:', err.message, err.status);
 	})
