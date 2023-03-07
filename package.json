@@ -11,7 +11,7 @@
     "url": "git@gitee.com:zhywxyy/ecs_npm.git"
   },
   "bin": {
-    "ecsc": "./index.js"
+    "ecsc": "index.js"
   },
   "dependencies": {
     "chalk": "^2.4.1",
