@@ -56,7 +56,7 @@ User need to ask the following questions:
 - The name of the bundle.
 - The architecture of the target device
   (Provide options: x86-64, x86, arm64, arm, mips64, mips32, riscv64, riscv32, ppc, loongarch, sparc, csky).
-- Whether to mount '/lib' to real '/lib' of the hosting (the option is 'readonly').
+- Whether to mount '/lib' to host '/lib' (the option is 'readonly').
 - The startup parameter of the bundle.
 
 For example, create a bundle which name is `demo` and target device is `x86-64`, the '/lib' is auto mounted to the host '/lib' and the startup parameter is `javascript /apps/HelloVSOA.js`:
@@ -84,7 +84,7 @@ For example, create a bundle which name is `demo` and target device is `x86-64`,
 > create demo/rootfs/etc/startup.sh success!
 ```
 
-Then the bundle will be created under the working directory, the 'javascript' binary tool will be copied to the '/bin' and a default shell file as '/etc/startup' will be created which the content is 'shstack 200000'.
+Then the bundle will be created under the working directory, the 'javascript' binary tool will be copied to the '/bin' and a default shell file as '/etc/startup.sh' will be created which the content is 'shstack 200000'.
 
 ### Copy Files
 
