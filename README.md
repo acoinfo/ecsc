@@ -1,37 +1,30 @@
-# ECSC (ECS Command-line Tool)
+# ECSC (ECS Command tools)
 
-ECSC is a command-line tool for ECS (Edge Container Stack) of AcoInfo. It has the follwing features:
+ECSC is a command-line tool for Edge Container Stack of ACOINFO. You may use it to:
 
 - Create a container bundle.
 - Package a container bundle as a container image.
 
-ECSC support works in Node.js runtime in both Windows and Linux. 
 
-## ECSC Install
+## Get started
 
-User can use the following command to install ECSC when Node.js is installed.
-
-``` bash
+``` sh
+# install the package globally
 npm install -g ecsc
-```
 
-Use the following command to determine whether the installation is successful:
-
-``` bash
+# verify if the package has been installed
 ecsc version
-```
 
-The version of ecsc should be printed.
-
-## ECSC Helper
-
-User can use the following command to display the help information of ECSC.
-
-``` bash
+# print help document
 ecsc help
 ```
 
-## ECSC Functions
+## Workflow
+
+To create an container image, there are 3 steps to do:
+1. create an bundle (directory)
+2. prepare and copy your files into the bundle (directory)
+3. pack the bundle directory into a tar file.
 
 ### Create Container Bundle
 
