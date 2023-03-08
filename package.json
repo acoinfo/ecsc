@@ -1,14 +1,14 @@
 {
   "name": "@acoinfo/ecsc",
   "version": "0.0.1",
-  "description": "ECS Command Tool",
+  "description": "ECS Command Tools",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git@gitee.com:zhywxyy/ecs_npm.git"
+    "url": "git@gitee.com:acoinfo/ecsc.git"
   },
   "bin": {
     "ecsc": "index.js"
@@ -19,6 +19,6 @@
     "inquirer": "^6.0.0",
     "shelljs": "^0.8.2"
   },
-  "author": "",
+  "author": "zhywxyy@gitee",
   "license": "Apache-2.0"
 }
