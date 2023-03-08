@@ -4,7 +4,9 @@
   "description": "ECS Command Tools",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tape test/**/test-*.js | tap-spec",
+    "lint": "npx eslint index.js",
+    "cz": "cz"
   },
   "repository": {
     "type": "git",
@@ -13,12 +15,24 @@
   "bin": {
     "ecsc": "index.js"
   },
+  "author": "zhywxyy@gitee",
+  "license": "Apache-2.0",
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  },
   "dependencies": {
     "chalk": "^2.4.1",
     "figlet": "^1.2.0",
     "inquirer": "^6.0.0",
     "shelljs": "^0.8.2"
   },
-  "author": "zhywxyy@gitee",
-  "license": "Apache-2.0"
+  "devDependencies": {
+    "commitizen": "^4.3.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^8.35.0",
+    "tap-spec": "^5.0.0",
+    "tape": "^5.6.3"
+  }
 }
