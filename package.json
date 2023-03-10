@@ -15,7 +15,10 @@
   "bin": {
     "ecsc": "index.js"
   },
-  "author": "zhywxyy@gitee",
+  "keywords": [
+    "ecsc"
+  ],
+  "author": "wangxuan@acoinfo.com",
   "license": "Apache-2.0",
   "config": {
     "commitizen": {

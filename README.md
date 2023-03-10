@@ -48,36 +48,36 @@ Then the interaction process will begin.
 User need to ask the following questions:
 - The name of the bundle.
 - The architecture of the target device
-  (Provide options: x86-64, x86, arm64, arm, mips64, mips32, riscv64, riscv32, ppc, loongarch, sparc, csky).
-- Whether to mount '/lib' to host '/lib' (the option is 'readonly').
+  (Provide options: x86-64, arm64, arm, mips64, ppc, loongarch).
+- Whether to using JSRE of the host
+  (Auto mount the '/bin/javascript' and '/lib' to the host).
 - The startup parameter of the bundle.
 
-For example, create a bundle which name is `demo` and target device is `x86-64`, the '/lib' is auto mounted to the host '/lib' and the startup parameter is `javascript /apps/HelloVSOA.js`:
+For example, create a bundle which name is `demo` and target device is `x86-64`, the JSRE is auto mounted to the host and the startup parameter is `javascript /apps/HelloVSOA.js`:
 
 ``` bash
 ? What is the name of the bundle? demo
 ? What is the architecture of the target device? x86-64
-? Do you want to mount '/lib' to host '/lib'? (The mount option is 'rx') Yes
+? Do you want to using the JSRE of the host? Yes
 ? What is the start argument of the image? javascript /apps/HelloVSOA.js
 > create demo/config.json success!
-> create demo/rootfs/apps success
-> create demo/rootfs/home success
-> create demo/rootfs/boot success
-> create demo/rootfs/qt success
-> create demo/rootfs/dev success
-> create demo/rootfs/lib success
-> create demo/rootfs/proc success
-> create demo/rootfs/root success
-> create demo/rootfs/tmp success
-> create demo/rootfs/sbin success
-> create demo/rootfs/usr success
-> create demo/rootfs/var success
-> create demo/rootfs/etc success
-> copy demo/rootfs/bin/javascript success
+> create demo/rootfs/apps success!
+> create demo/rootfs/home success!
+> create demo/rootfs/boot success!
+> create demo/rootfs/qt success!
+> create demo/rootfs/dev success!
+> create demo/rootfs/lib success!
+> create demo/rootfs/proc success!
+> create demo/rootfs/root success!
+> create demo/rootfs/tmp success!
+> create demo/rootfs/sbin success!
+> create demo/rootfs/usr success!
+> create demo/rootfs/var success!
+> create demo/rootfs/etc success!
 > create demo/rootfs/etc/startup.sh success!
 ```
 
-Then the bundle will be created under the working directory, the 'javascript' binary tool will be copied to the '/bin' and a default shell file as '/etc/startup.sh' will be created which the content is 'shstack 200000'.
+Then the bundle will be created under the working directory, a default shell file as '/etc/startup.sh' will be created which the content is 'shstack 200000'.
 
 ### Copy Files
 

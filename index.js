@@ -7,6 +7,7 @@ const inquirer = require("inquirer");
 const chalk = require("chalk");
 const figlet = require("figlet");
 const shell = require("shelljs");
+const save = require('./save');
 
 const configJson = {
     "ociVersion": "1.0.0",
@@ -141,6 +142,12 @@ const autoMountLib = {
     "options":["rx"]
 };
 
+const autoMountJsBin = {
+    "destination": "/bin/javascript",
+    "source": "/bin/javascript",
+    "options":["rx"]
+};
+
 const startupSh = "shstack 200000";
 
 function mkdirs(dirname, callback) {
@@ -155,17 +162,13 @@ function mkdirs(dirname, callback) {
     });
 }
 
-function copy(destdir, arch) {
-    var src = __dirname + '/template/' + arch + '/bin/javascript';
-    fs.createReadStream(src).pipe(fs.createWriteStream(destdir));
-}
-
 /*
-*  /etc and /bin for special
+*  /etc for special
 */
 const bundle = [
     '/apps',
     '/home',
+    '/bin',
     '/qt',
     '/boot',
     '/dev',
@@ -200,17 +203,17 @@ const askQuestions = () => {
         type: "list",
         name: "ARCH",
         message: "What is the architecture of the target device?",
-        choices: ["x86-64", "x86", "arm64", "arm", "mips64", "mips32", "riscv64", "riscv32", "ppc", "loongarch", "sparc", "csky"],
+        choices: ["x86-64", "arm64", "arm", "mips64", "ppc", "loongarch"],
       },
       {
         type: "confirm",
-        name: "MOUNT_LIB",
-        message: "Do you want to mount '/lib' to real '/lib'?",
+        name: "MOUNT_JSRE",
+        message: "Do you want to using the JSRE of the host?",
       },
       {
         type: "input",
         name: "ARGUMENT",
-        message: "What is the start argument of the image?"
+        message: "What is the start parameter of the image?"
       },
     ];
     return inquirer.prompt(questions);
@@ -225,12 +228,13 @@ async function run (cmd, arg0, arg1, arg2, arg3, arg4) {
 
         // ask questions
         const answers = await askQuestions();
-        const { BUNDLE, ARCH, MOUNT_LIB, ARGUMENT } = answers;
+        const { BUNDLE, ARCH, MOUNT_JSRE, ARGUMENT } = answers;
 
         mkdirs(BUNDLE + '/rootfs', function () {
             configJson.platform.arch = ARCH;
-            if (MOUNT_LIB) {
+            if (MOUNT_JSRE) {
                 configJson.mounts.push(autoMountLib);
+                configJson.mounts.push(autoMountJsBin);                
             }            
             if (ARGUMENT) {
                 configJson.process.args = ARGUMENT.split(' ');
@@ -244,11 +248,11 @@ async function run (cmd, arg0, arg1, arg2, arg3, arg4) {
                 console.log('> create ' + BUNDLE + '/config.json success!');
 
                 for (let i = 0; i < bundle.length; i++) {
-                    mkdirs(BUNDLE + '/rootfs' + bundle[i], () => {console.log('> create ' + BUNDLE + '/rootfs' + bundle[i] + ' success')});
+                    mkdirs(BUNDLE + '/rootfs' + bundle[i], () => {console.log('> create ' + BUNDLE + '/rootfs' + bundle[i] + ' success!')});
                 }
 
                 mkdirs(BUNDLE + '/rootfs/etc', () => {
-                    console.log('> create ' + BUNDLE + '/rootfs/etc' + ' success');
+                    console.log('> create ' + BUNDLE + '/rootfs/etc' + ' success!');
 
                     fs.writeFile(BUNDLE + '/rootfs/etc/startup.sh', startupSh, (error) => {
                         if (error) {
@@ -258,56 +262,34 @@ async function run (cmd, arg0, arg1, arg2, arg3, arg4) {
                         console.log('> create ' + BUNDLE + '/rootfs/etc/startup.sh success!');
                     }); 
                 });
-
-                mkdirs(BUNDLE + '/rootfs/bin', () => {
-                    copy(BUNDLE + '/rootfs/bin/javascript', ARCH);
-                    console.log('> copy ' + BUNDLE + '/rootfs/bin/javascript' + ' success');
-                });
             });   
         });
         break;
 
     case 'pack':
         if (arg0 == undefined) {
-            console.log('Usage: ecsc pack tarballPath bundle name label');
+            console.log('Usage: ecsc pack tarballPath bundle name tag');
             console.log('   e.g.: ecsc pack demo.tar demo example latest');
             break;
         }
 
-        let child;
+        /*
+        * arg0: tarball
+        * arg1: bundle
+        * arg2: name
+        * arg3: tag
+        */
+        save.imagePack(arg0, arg1, arg2, arg3);
+        break;
 
-        switch (process.platform) {
-            case "linux": //linux 
-            
-                fs.chmod(__dirname + '/tools/linux/ecs_save', fs.constants.S_IXUSR, function(err) {
-                    if (err) {
-                        console.log(`+ chmod ecs_save fail, ${err}`);
-                    }
-                });
-
-                fs.chmod(__dirname + '/tools/linux/tar', fs.constants.S_IXUSR, function(err) {
-                    if (err) {
-                        console.log(`+ chmod tar fail, ${err}`);
-                    }
-                });
-
-                child = cp.spawn(__dirname + '/tools/linux/ecs_save', [arg0, arg1, arg2, arg3, 'sylixos', __dirname + '/tools/linux/tar']);
-                child.stdout.on('data', (data) => {
-                    console.log(`${data}`);
-                });
-            break;
-
-            case "win32": //windows 
-                child = cp.spawn(__dirname + '/tools/windows/ecs_save.exe', [arg0, arg1, arg2, arg3, 'sylixos', __dirname + '/tools/windows/tar.exe']);
-                child.stdout.on('data', (data) => {
-                    console.log(`${data}`);
-                });
-            break;
-        
-            default:
-                throw new Error('OS ' + process.platform + ' not support.');
-        }
-
+    case 'help':
+        console.log('Usage: ecsc [command] [arguments]');
+        console.log('  command: ');
+        console.log('    create [-f EcsFile]:  create an image bundle');
+        console.log('       e.g.: ecsc create');
+        console.log('       e.g.: ecsc create -f EcsFile (not support yet)');
+        console.log('    pack tarballPath bundle name tag:  pack an image bundle');
+        console.log('       e.g.: ecsc pack demo.tar demo example latest');
         break;
 
       default:
@@ -321,9 +303,9 @@ run(process.argv[2], process.argv[3], process.argv[4], process.argv[5], process.
         console.log('  command: ');
         console.log('    create [-f EcsFile]:  create an image bundle');
         console.log('       e.g.: ecsc create');
-        console.log('       e.g.: ecsc create -f EcsFile');
-        console.log('    pack tarballPath bundle name label:  pack an image bundle');
+        console.log('       e.g.: ecsc create -f EcsFile (not support yet)');
+        console.log('    pack tarballPath bundle name tag:  pack an image bundle');
         console.log('       e.g.: ecsc pack demo.tar demo example latest');
 
-        console.error('Fetch ERROR:', err.message, err.status);
+        console.error('Fetch ERROR:', err.message);
 	})
