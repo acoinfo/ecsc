@@ -16,8 +16,8 @@
       cwd: '/'
     },
     hostname: 'sylixos_ecs',
-    platform: { os: 'sylixos', arch: 'arm64' },   // deprecated
     sylixos: {                                    // platform-specific
+      arch: ['arm64'],
       devices: [
         { path: '/dev/fb0', access: 'rw' },
         { path: '/dev/input/xmse', access: 'rw' },

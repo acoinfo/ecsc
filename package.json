@@ -16,7 +16,10 @@
     "ecsc": "index.js"
   },
   "keywords": [
-    "ecs", "ecsc", "container", "oci"
+    "ecs",
+    "ecsc",
+    "container",
+    "oci"
   ],
   "author": "wangxuan@acoinfo.com",
   "license": "Apache-2.0",
