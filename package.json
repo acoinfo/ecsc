@@ -1,5 +1,5 @@
 {
-  "name": "@acoinfo/ecsc",
+  "name": "ecsc",
   "version": "0.0.1",
   "description": "ECS Command Tools",
   "main": "index.js",
@@ -16,7 +16,7 @@
     "ecsc": "index.js"
   },
   "keywords": [
-    "ecsc"
+    "ecs", "ecsc", "container", "oci"
   ],
   "author": "wangxuan@acoinfo.com",
   "license": "Apache-2.0",
@@ -27,9 +27,13 @@
   },
   "dependencies": {
     "chalk": "^2.4.1",
+    "dayjs": "^1.11.7",
     "figlet": "^1.2.0",
     "inquirer": "^6.0.0",
-    "shelljs": "^0.8.2"
+    "json5": "^2.2.3",
+    "shelljs": "^0.8.2",
+    "tar": "^6.1.13",
+    "tar-fs": "^2.1.1"
   },
   "devDependencies": {
     "commitizen": "^4.3.0",
