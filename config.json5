@@ -1,0 +1,65 @@
+// https://github.com/opencontainers/runtime-spec/blob/main/config.md
+{
+    ociVersion: '1.0.0',
+    root: { path: 'rootfs', readonly: false },
+    mounts: [
+      { destination: '/qt', source: '/qt', options: [ 'rx' ] },
+      { destination: '/etc/lic', source: '/etc/lic', options: [ 'rw' ] }
+    ],
+    process: {
+      user: { uid: 0, gid: 0 },
+      args: [ '' ],
+      env: [
+        'LD_LIBRARY_PATH=/qt/lib:/usr/lib:/lib:/usr/local/lib:/lib/jsre:/lib/vsoa',
+        'PATH=/usr/bin:/bin:/usr/pkg/sbin:/sbin:/usr/local/bin'
+      ],
+      cwd: '/'
+    },
+    hostname: 'sylixos_ecs',
+    platform: { os: 'sylixos', arch: 'arm64' },   // deprecated
+    sylixos: {                                    // platform-specific
+      devices: [
+        { path: '/dev/fb0', access: 'rw' },
+        { path: '/dev/input/xmse', access: 'rw' },
+        { path: '/dev/input/xkbd', access: 'rw' },
+        { path: '/dev/net/vnd', access: 'rw' }
+      ],
+      resources: {
+        cpu: { highestPrio: 160, lowestPrio: 250 },
+        memory: { kheapLimit: 2097152, memoryLimitMB: 512 },
+        kernelObject: {
+          threadLimit: 300,
+          threadPoolLimit: 1,
+          eventLimit: 800,
+          eventSetLimit: 50,
+          partitionLimit: 5,
+          regionLimit: 5,
+          msgQueueLimit: 50,
+          timerLimit: 5,
+          rmsLimit: 5,
+          threadVarLimit: 2,
+          posixMqueueLimit: 300,
+          dlopenLibraryLimit: 50,
+          xsiipcLimit: 100,
+          socketLimit: 50,
+          srtpLimit: 10,
+          deviceLimit: 60
+        },
+        disk: { limitMB: 2048 }
+      },
+      commands: [
+        'exec',    'top',      'cpuus',
+        'vi',      'cat',      'touch',
+        'ps',      'ts',       'tp',
+        'ss',      'ints',     'ls',
+        'cd',      'pwd',      'modules',
+        'varload', 'varsave',  'shstack',
+        'srtp',    'shfile',   'help',
+        'debug',   'shell',    'll',
+        'sync',    'ln',       'kill',
+        'free',    'ifconfig', 'mems',
+        'env'
+      ],
+      network: { telnetdEnable: true, ftpdEnable: true }
+    }
+  }

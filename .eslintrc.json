@@ -11,5 +11,11 @@
         "ecmaVersion": "latest"
     },
     "rules": {
+        "semi": ["error", "never"],
+        "quotes": ["error", "single"],
+        "indent": ["error", 2],
+        "operator-linebreak": ["error"],
+        "keyword-spacing": [ "error" ],
+        "space-infix-ops": [ "error" ]
     }
 }
