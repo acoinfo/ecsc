@@ -2,10 +2,10 @@
   "name": "ecsc",
   "version": "0.0.1",
   "description": "ECS Command Tools",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
     "test": "tape test/**/test-*.js | tap-spec",
-    "lint": "npx eslint index.js",
+    "lint": "npx eslint main.js lib/**/*.js",
     "cz": "cz"
   },
   "repository": {
@@ -13,7 +13,7 @@
     "url": "git@gitee.com:acoinfo/ecsc.git"
   },
   "bin": {
-    "ecsc": "index.js"
+    "ecsc": "main.js"
   },
   "keywords": [
     "ecs",
