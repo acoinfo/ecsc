@@ -64,6 +64,11 @@ test('optparser with complex spec', t => {
   t.end()
 })
 
+test('optparser boundary conditions', t => {
+  t.deepEqual(parseArgv([]), { _argv: [] }, 'parseArgv([])')
+  t.end()
+})
+
 test('optparser invalid options', t => {
   let message
   const spec = { foo: false, b: {} }
