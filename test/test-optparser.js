@@ -15,9 +15,9 @@ test('optparser -h or -v', t => {
 })
 
 test('optparser without spec', t => {
-  t.deepEqual(parseArgv('help'), { _cmd: 'help' }, 'parse help')
+  t.deepEqual(parseArgv('help'), { _cmd: 'help', _argv: [] }, 'parse help')
   t.deepEqual(parseArgv(['-a', '3', '--foo']),
-    { '0': '-a', '1': '3', '2': '--foo' }, 'parse help -a 3 --foo')
+    { _argv: ['-a', '3', '--foo'] }, 'parse help -a 3 --foo')
   t.end()
 })
 
