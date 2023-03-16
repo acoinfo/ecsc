@@ -1,7 +1,7 @@
 {
   "name": "ecsc",
   "version": "0.0.1",
-  "description": "ECS Command Tools",
+  "description": "ECS Commander",
   "main": "main.js",
   "scripts": {
     "test": "tape test/**/test-*.js | tap-spec",
@@ -17,7 +17,6 @@
   },
   "keywords": [
     "ecs",
-    "ecsc",
     "container",
     "oci"
   ],
@@ -29,12 +28,9 @@
     }
   },
   "dependencies": {
-    "chalk": "^2.4.1",
     "dayjs": "^1.11.7",
-    "figlet": "^1.2.0",
     "inquirer": "^6.0.0",
     "json5": "^2.2.3",
-    "shelljs": "^0.8.2",
     "tar": "^6.1.13",
     "tar-fs": "^2.1.1"
   },

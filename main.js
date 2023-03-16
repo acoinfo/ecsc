@@ -46,6 +46,8 @@ function run () {
       return command(parsedOptions._argv, config[cmd])
     }
     logger.warn(`Command "${parsedOptions._cmd}" is not supported`)
+  } else if (parsedOptions._argv.length > 0) {
+    logger.warn(`Option "${parsedOptions._argv[0]}" is not supported`)
   }
   return Commands.help()
 }

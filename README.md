@@ -1,9 +1,9 @@
-# ECSC (ECS Command tools)
+# ECSC (ECS Commander)
 
-ECSC is a command-line tool for Edge Container Stack of ACOINFO. You may use it to:
+ECSC is a package of command-line tools for Edge Container Stack of ACOINFO. You may use it to:
 
 - Create a container bundle.
-- Package a container bundle as a container image.
+- Package a container bundle into an OCI container image tarball.
 
 
 ## Get started
@@ -22,84 +22,54 @@ ecsc help
 ## Workflow
 
 To create an container image, there are 3 steps to do:
-1. create an bundle (directory)
-2. prepare and copy your files into the bundle (directory)
-3. pack the bundle directory into a tar file.
 
-### Create Container Bundle
+1. create an bundle (directory).
+2. prepare and copy your files into the bundle (directory).
+3. pack the bundle directory into an OCI image tar.
 
-User can use the following command to create an empty bundle:
+### 1. Create Container Bundle
 
-``` bash
-ecsc create
+Invoke `create` sub command without any option will start an interactive wizard:
+
+``` sh
+$ ecsc create
+
+   _____________ _____                              __       
+  / __/ ___/ __// ___/__  __ _  __ _  ___ ____  ___/ /__ ____
+ / _// /___\ \ / /__/ _ \/  ' \/  ' \/ _ `/ _ \/ _  / -_) __/
+/___/\___/___/ \___/\___/_/_/_/_/_/_/\_,_/_//_/\_,_/\__/_/   
+
+? What is name for the bundle (directory)? demo
+? What is the architecture(s) of the bundle? x86-64
+? Would you mount and reuse JSRE from the container host? Yes
+? What is the start parameter (process.args) of the image? javascript /apps/hello.js
 ```
 
-Then the interaction process will begin.
+After that bundle will be created in working directory, a default shell file 
+`/etc/startup.sh` will also be created with 'shstack 200000'.
 
+### 2. Copy application files
+
+This step requires manual file coping or editing. Application developer may
+layout the application files into `<bundle>/rootfs` accordingly.
+
+**Notes**
+- the archtecture of binary files must be covered by those set in step 1.
+- application entrypoint should be the same as `process.args` set in step 1.
+
+### 3. Package bundle into OCI image
+
+``` sh
+$ ecsc pack <bundle> [-t name[:tag]] [tarball_path]
 ```
-  _____ ____ ____     ____                                          _       _ _              _____           _
- | ____/ ___/ ___|   / ___|___  _ __ ___  _ __ ___   __ _ _ __   __| |     | (_)_ __   ___  |_   _|__   ___ | |
- |  _|| |   \___ \  | |   / _ \| '_ ` _ \| '_ ` _ \ / _` | '_ \ / _` |_____| | | '_ \ / _ \   | |/ _ \ / _ \| |
- | |__| |___ ___) | | |__| (_) | | | | | | | | | | | (_| | | | | (_| |_____| | | | | |  __/   | | (_) | (_) | |
- |_____\____|____/   \____\___/|_| |_| |_|_| |_| |_|\__,_|_| |_|\__,_|     |_|_|_| |_|\___|   |_|\___/ \___/|_|
-? What is the name of the bundle?
+- `bundle` is the container bundle directory to pack from.
+- `name[:tag]` container image name and tag, defaults to 'bundle:latest'.
+- `tarball_path` optional tarball file name, defaults to 'bundle.arch.tar'.
+
+For example, to package the 'demo' bundle created in step 1:
+
+``` sh
+# below command will pack the 'demo' bundle directory and create a 'demo.tar'
+# with 'demo:latest' as it name and tag, in current working directory
+ecsc pack ./demo
 ```
-
-User need to ask the following questions:
-- The name of the bundle.
-- The architecture of the target device
-  (Provide options: x86-64, arm64, arm, mips64, ppc, loongarch).
-- Whether to using JSRE of the host
-  (Auto mount the '/bin/javascript' and '/lib' to the host).
-- The startup parameter of the bundle.
-
-For example, create a bundle which name is `demo` and target device is `x86-64`, the JSRE is auto mounted to the host and the startup parameter is `javascript /apps/HelloVSOA.js`:
-
-``` bash
-? What is the name of the bundle? demo
-? What is the architecture of the target device? x86-64
-? Do you want to using the JSRE of the host? Yes
-? What is the start argument of the image? javascript /apps/HelloVSOA.js
-> create demo/config.json success!
-> create demo/rootfs/apps success!
-> create demo/rootfs/home success!
-> create demo/rootfs/boot success!
-> create demo/rootfs/qt success!
-> create demo/rootfs/dev success!
-> create demo/rootfs/lib success!
-> create demo/rootfs/proc success!
-> create demo/rootfs/root success!
-> create demo/rootfs/tmp success!
-> create demo/rootfs/sbin success!
-> create demo/rootfs/usr success!
-> create demo/rootfs/var success!
-> create demo/rootfs/etc success!
-> create demo/rootfs/etc/startup.sh success!
-```
-
-Then the bundle will be created under the working directory, a default shell file as '/etc/startup.sh' will be created which the content is 'shstack 200000'.
-
-### Copy Files
-
-User need to copy the necessary files into the bundle.
-
-### Package Container Bundle as Tarball
-
-User use the following command to package a container bundle as a tarball.
-
-``` bash
-ecsc  pack  tarballPath  bundle  name  tag
-```
-
-- `tarballPath` is the path of the target tarball, which should be suffixed with '.tar'.
-- `bundle` is the specified bundle path to package.
-- `name` is the name of the tarball image.
-- `tag` is the tag of the image, may be `latest`.
-
-For example, package the above bundle 'demo' as an image `demo.tar`:
-
-``` bash
-ecsc pack demo.tar demo x64_demo latest
-```
-
-Then the image `demo.tar` is created in current working directory.

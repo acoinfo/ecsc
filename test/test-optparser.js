@@ -69,6 +69,13 @@ test('optparser boundary conditions', t => {
   t.end()
 })
 
+test('optparser mixed options and values', t => {
+  const spec = { t: { o: true }, }
+  t.deepEqual(parseString(spec, 'foo a -t t1 b -t t2 c'),
+    { _cmd: 'foo', _argv: ['a', 'b', 'c'], t: 't2' }, 'parseString("foo a -t t1 b -t t2 c")')
+  t.end()
+})
+
 test('optparser invalid options', t => {
   let message
   const spec = { foo: false, b: {} }
@@ -77,8 +84,6 @@ test('optparser invalid options', t => {
   t.throws(() => parseString(spec, '-a'), { message }, message)
   message = 'option "-b" requires an option value'
   t.throws(() => parseString(spec, '-b'), { message }, message)
-  message = 'option "bar" is not supported'
-  t.throws(() => parseString(spec, '--foo bar'), { message }, message)
 
   t.end()
 })

@@ -13,11 +13,11 @@
         'LD_LIBRARY_PATH=/qt/lib:/usr/lib:/lib:/usr/local/lib:/lib/jsre:/lib/vsoa',
         'PATH=/usr/bin:/bin:/usr/pkg/sbin:/sbin:/usr/local/bin'
       ],
-      cwd: '/'
+      cwd: '/apps'
     },
     hostname: 'sylixos_ecs',
+    platform: { os: 'sylixos', arch: 'arm64' },   // deprecated
     sylixos: {                                    // platform-specific
-      arch: ['arm64'],
       devices: [
         { path: '/dev/fb0', access: 'rw' },
         { path: '/dev/input/xmse', access: 'rw' },

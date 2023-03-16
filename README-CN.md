@@ -2,10 +2,10 @@
 
 ECSC 是翼辉 ECS (Edge Container Stack) 的命令行工具，您可以使用它进行：
 
-- 创建容器 Bundle。
-- 打包容器 Bundle 为容器镜像包。
+- 创建容器 Bundle（文件夹）。
+- 打包容器 Bundle 并输出一个 OCI 容器镜像 tar 包。
 
-## 入门使用
+## 开始
 
 ``` sh
 # install the package globally
@@ -20,17 +20,17 @@ ecsc help
 
 ## 工作流程
 
-创建一个容器镜像，需要按照如下三个步骤：
+创建一个容器镜像，需要以下三个步骤：
 
 1. 创建一个容器 Bundle 目录。
 2. 将需要打包的文件拷贝到该 Bundle 目录内。
 3. 将 Bundle 目录打包为一个 tar 包。
 
-### 创建容器 Bundle
+### 1. 创建容器 Bundle
 
 用户可以使用如下的命令创建一个空容器 Bundle:
 
-``` bash
+``` sh
 ecsc create
 ```
 
