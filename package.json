@@ -6,6 +6,7 @@
   "scripts": {
     "test": "tape test/**/test-*.js | tap-spec",
     "lint": "npx eslint main.js lib/**/*.js",
+    "prepublish": "npm run lint && npm run test",
     "cz": "cz"
   },
   "repository": {
