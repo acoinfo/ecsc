@@ -18,8 +18,8 @@ const JSON5 = require('json5')
 
 const optparser = require('./lib/optparser')
 const Commands = require('./lib/commands')
-
 const logger = require('./lib/logger')
+
 const config = {
   create: {
     configTemplate: loadConfigTemplate('config.json5'),
@@ -30,24 +30,28 @@ const config = {
 run()
 
 function run () {
-  const parsedOptions = optparser.parseProcessArgv()
-
-  if (parsedOptions._help) {
-    return Commands.help()
-  }
-  if (parsedOptions._version) {
-    return Commands.version()
-  }
-
-  if (parsedOptions._cmd) {
-    const cmd = parsedOptions._cmd
-    const command =  Commands[parsedOptions._cmd]
-    if (command) {
-      return command(parsedOptions._argv, config[cmd])
+  try {
+    const parsedOptions = optparser.parseProcessArgv()
+  
+    if (parsedOptions.$help) {
+      return Commands.help()
     }
-    logger.warn(`Command "${parsedOptions._cmd}" is not supported`)
-  } else if (parsedOptions._argv.length > 0) {
-    logger.warn(`Option "${parsedOptions._argv[0]}" is not supported`)
+    if (parsedOptions.$version) {
+      return Commands.version()
+    }
+  
+    if (parsedOptions.$cmd) {
+      const cmd = parsedOptions.$cmd
+      const command =  Commands[cmd]
+      if (command) {
+        return command(parsedOptions.$argv, config[cmd])
+      }
+      logger.warn(`Command "${cmd}" is not supported`)
+    } else if (parsedOptions.$argv.length > 0) {
+      logger.warn(`Option "${parsedOptions.$argv[0]}" is not supported`)
+    }
+  } catch (err) {
+    logger.warn(err.message)
   }
   return Commands.help()
 }

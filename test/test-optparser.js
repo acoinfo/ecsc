@@ -1,78 +1,126 @@
 'use strict'
 
 const test = require('tape')
-const { parseArgv, parseString } = require('../lib/optparser')
+const { parseArgv, parseString, parseProcessArgv } = require('../lib/optparser')
 
 test('optparser -h or -v', t => {
-  t.deepEqual(parseArgv('--help'), { _help: true }, 'parse --help')
-  t.deepEqual(parseArgv('-h'), { _help: true }, 'parse -h')
-  t.deepEqual(parseArgv('--version'), { _version: true }, 'parse --version')
-  t.deepEqual(parseArgv('-v'), { _version: true }, 'parse -v')
+  t.deepEqual(parseArgv(['--help']), { $help: true }, 'parse --help')
+  t.deepEqual(parseArgv(['-h']), { $help: true }, 'parse -h')
+  t.deepEqual(parseArgv(['--version']), { $version: true }, 'parse --version')
+  t.deepEqual(parseArgv(['-v']), { $version: true }, 'parse -v')
 
-  t.deepEqual(parseArgv(['-h', '-v']), { _help: true }, 'parse -v -h')
-  t.deepEqual(parseArgv(['-v', '-h']), { _version: true }, 'parse -v -h')
+  t.deepEqual(parseArgv(['-h', '-v']), { $help: true }, 'parse -v -h')
+  t.deepEqual(parseArgv(['-v', '-h']), { $help: true }, 'parse -v -h') // help first
   t.end()
 })
 
 test('optparser without spec', t => {
-  t.deepEqual(parseArgv('help'), { _cmd: 'help', _argv: [] }, 'parse help')
-  t.deepEqual(parseArgv(['-a', '3', '--foo']),
-    { _argv: ['-a', '3', '--foo'] }, 'parse help -a 3 --foo')
+  t.deepEqual(parseArgv(['help']), { $argv: ['help'] }, 'parse help')
+  t.deepEqual(parseArgv(['foo', '3', 'bar']),
+    { $argv: ['foo', '3', 'bar'] }, 'parse ["foo", "3", "bar"]')
+  t.end()
+})
+
+test('optparser only { _cmd }', t => {
+  const spec = { $cmd: true }
+  t.deepEqual(parseArgv(['help'], spec), { $cmd: 'help', $argv: [] }, 'parse help as cmd')
+  t.deepEqual(parseArgv(['help', '-h'], { $help: true }), { $help: true }, 'parse help')
+  t.deepEqual(parseArgv(['a', '3', '--foo'], spec),
+    { $cmd: 'a', $argv: ['3', '--foo'] }, 'parse help -a 3 --foo')
+
+  let message
+  message = 'cmd "-a" should starts with alphabet only'
+  t.throws(() => parseArgv(['-a', '3', '--foo'], spec), { message }, message)
+  message = 'cmd "3" should starts with alphabet only'
+  t.throws(() => parseArgv(['3', '--foo'], spec), { message }, message)
+  t.end()
+})
+
+test('optparser with _cmd spec which ignores others', t => {
+  const spec = { $cmd: true, a: {/*requried but no-verifier*/}, b: false, foo: true, bar: false }
+
+  let argv
+  argv = 'cmd -a 32 --foo'
+  t.deepEqual(parseString(argv, spec),
+    { $cmd: 'cmd', $argv: ['-a', '32', '--foo'] }, argv)
+  argv = 'cmd a v -b --foo --bar'
+  t.deepEqual(parseString(argv, spec), 
+    { $cmd: 'cmd', $argv: ['a', 'v', '-b', '--foo', '--bar'] }, argv)
+
   t.end()
 })
 
 test('optparser with spec', t => {
-  const spec = { a: {/*requried but no-verifier*/}, b: false, foo: true, bar: false }
+  const spec = { 
+    a_: () => true,   // required valued option with an passthrough verifier
+    foo_: true, // required valued option, 'truthy' = passthrough verifier
+    b: null,    // optional flag option that has no verifier (null)
+    bar: null   // optional valuded option
+  }
+     
   let message
   message = 'option "-a" is required'
-  t.throws(() => parseString(spec, '-b --foo --bar'), { message }, message)
+  // t.throws(() => parseString('cmd -b --foo --bar', spec), { message }, message)
   message = 'option "--foo" is required'
-  t.throws(() => parseString(spec, '-a 32 --bar'), { message }, message)
-  t.throws(() => parseString(spec, 'foo -a 32 --bar'), { message }, message)
+  t.throws(() => parseString('-a 32 --bar', spec), { message }, message)
+  t.throws(() => parseString('foo -a 32 --bar', spec), { message }, message)
 
   let argv
-  argv = 'cmd -a 32 --foo'
-  t.deepEqual(parseString(spec, argv), { _cmd: 'cmd', a: '32', foo: true }, argv)
-  argv = 'cmd -a v -b --foo --bar'
-  t.deepEqual(parseString(spec, argv), { _cmd: 'cmd', a: 'v', b: true, foo: true, bar: true }, argv)
+  argv = 'cmd -a 32 --foo bar'
+  t.deepEqual(parseString(argv, spec), { $argv: ['cmd'], a: '32', foo: 'bar' }, argv)
+  argv = 'cmd -a v -b --foo vv --bar o'
+  t.deepEqual(parseString(argv, spec), { $argv: ['cmd', 'o'], a: 'v', b: true, foo: 'vv', bar: true }, argv)
 
   t.end()
 })
 
-test('optparser with complex spec', t => {
+test('optparser with spec of verifier', t => {
   const spec = { 
-    a: { o: true, v: /^a/ },
-    b: v => v.startsWith('b'),
-    foo: { o: false, v: v => v.startsWith('foo') },
+    a: /^a/,
+    b_: v => v.startsWith('b'),
+    foo_: v => ['foo'].includes(v),
     bar: /^bar/
   }
-  
+  const parse = s => parseString(s, spec)
+
   let message
   message = 'option "-b" is required'
-  t.throws(() => parseString(spec, '-a a --foo foo --bar bar'), { message }, message)
+  t.throws(() => parse('-a a --foo foo --bar bar'), { message }, message)
   message = 'option "--foo" is required'
-  t.throws(() => parseString(spec, '-b b --bar bar'), { message }, message)
+  t.throws(() => parse('-b b --bar bar'), { message }, message)
   message = 'option "-b" has invalid value "c"'
-  t.throws(() => parseString(spec, '-a a -b c --foo foo --bar bar'), { message }, message)
+  t.throws(() => parse('-a a -b c --foo foo --bar bar'), { message }, message)
   message = 'option "--foo" has invalid value "3"'
-  t.throws(() => parseString(spec, '-b b2 --foo 3 --bar bar4'), { message }, message)
+  t.throws(() => parse('-b b2 --foo 3 --bar bar4'), { message }, message)
 
   let argv
-  argv = '-a a3 -b b --foo foo --bar bar'
-  t.deepEqual(parseString(spec, argv), { a: 'a3', b: 'b', foo: 'foo', bar: 'bar' }, argv)
+  argv = '-a a1 v -b b --foo foo vv --bar bar vvv'
+  t.deepEqual(parse(argv), { $argv:['v', 'vv', 'vvv'], a: 'a1', b: 'b', foo: 'foo', bar: 'bar' }, argv)
+  argv = '-a a2 v -b bar --foo foo vv vvv'
+  t.deepEqual(parse(argv), { $argv:['v', 'vv', 'vvv'], a: 'a2', b: 'bar', foo: 'foo' }, argv)
 
+  t.end()
+})
+
+test('optparser parseProcessArgv', t => {
+  const procArgv = parseProcessArgv({ $cmd: false })
+  t.ok(procArgv.$entry, `parseProcessArgv $entry ${procArgv.$entry}`)
+  t.ok(Array.isArray(procArgv.$argv), 'parseProcessArgv({ $cmd: false })')
   t.end()
 })
 
 test('optparser boundary conditions', t => {
-  t.deepEqual(parseArgv([]), { _argv: [] }, 'parseArgv([])')
+  t.deepEqual(parseString(), { $argv: [] }, 'parseString()')
+  t.deepEqual(parseString(''), { $argv: [] }, 'parseString("")')
+  t.deepEqual(parseArgv([]), { $argv: [] }, 'parseArgv([])')
+  t.deepEqual(parseArgv([]), { $argv: [] }, 'parseArgv([])')
   t.end()
 })
 
 test('optparser mixed options and values', t => {
-  const spec = { t: { o: true }, }
-  t.deepEqual(parseString(spec, 'foo a -t t1 b -t t2 c'),
-    { _cmd: 'foo', _argv: ['a', 'b', 'c'], t: 't2' }, 'parseString("foo a -t t1 b -t t2 c")')
+  const spec = { t: true, }
+  t.deepEqual(parseString('foo a -t t1 b -t t2 c', spec),
+    { $argv: ['foo', 'a', 'b', 'c'], t: 't2' }, 'parseString("foo a -t t1 b -t t2 c")')
   t.end()
 })
 
@@ -81,9 +129,9 @@ test('optparser invalid options', t => {
   const spec = { foo: false, b: {} }
 
   message = 'option "-a" is not supported'
-  t.throws(() => parseString(spec, '-a'), { message }, message)
+  t.throws(() => parseString('-a', spec), { message }, message)
   message = 'option "-b" requires an option value'
-  t.throws(() => parseString(spec, '-b'), { message }, message)
+  t.throws(() => parseString('-b', spec), { message }, message)
 
   t.end()
 })
