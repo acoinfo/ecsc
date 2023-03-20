@@ -1,6 +1,6 @@
 {
   "name": "ecsc",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "ECS Commander",
   "main": "main.js",
   "scripts": {
