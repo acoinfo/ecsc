@@ -5,7 +5,7 @@
  *
  * Detailed license information can be found in the LICENSE file.
  *
- * Author : Fu Tongtang <futongtang@acoinfo.com>
+ * Author : Wangxuan <wangxuan@acoinfo.com>
  * File   : main.js
  * Desc   : command line entrypoint
  */

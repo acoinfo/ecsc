@@ -1,6 +1,6 @@
 {
   "name": "ecsc",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "ECS Commander",
   "main": "main.js",
   "scripts": {
@@ -29,11 +29,9 @@
     }
   },
   "dependencies": {
-    "dayjs": "^1.11.7",
     "inquirer": "^6.0.0",
     "json5": "^2.2.3",
-    "tar": "^6.1.13",
-    "tar-fs": "^2.1.1"
+    "tar-stream": "^3.0.0"
   },
   "devDependencies": {
     "commitizen": "^4.3.0",
