@@ -40,13 +40,33 @@ $ ecsc create
 /___/\___/___/ \___/\___/_/_/_/_/_/_/\_,_/_//_/\_,_/\__/_/   
 
 ? What is name for the bundle (directory)? demo
-? What is the architecture(s) of the bundle? x86-64
+? What is the architecture of the bundle? x86-64
 ? Would you mount and reuse JSRE from the container host? Yes
 ? What is the start parameter (process.args) of the image? javascript /apps/hello.js
 ```
 
 After that bundle will be created in working directory, a default shell file 
 `/etc/startup.sh` will also be created with 'shstack 200000'.
+
+The `create` sub command also support CLI options (for automation scripting):
+
+``` sh
+ecs create [options]  create bundle with options or start an interactive wizard. 
+
+  -h | --help     print this help document
+  -d directory    path to local OCI bundle directory to be created.
+  -a arch         CPU architect to use, defaults to 'noarch' if not set, check
+                  CPU Architect section for more information.
+  -p args         container process (entrypoint) and its arguments.
+  -j              if set, mount and use host JSRE files.
+  -o              if set, overwrite exsiting bundle directory if exist.
+
+CPU Architect
+  noarch, x86-64, arm64, arm, riscv64, mips64, ppc, loongarch
+
+Example
+  ecs create -d ./demo -p '/bin/javascript /apps/demo.js'
+```
 
 ### 2. Copy application files
 

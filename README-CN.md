@@ -77,6 +77,26 @@ ecsc create
 
 以上流程结束后，将会在当前的工作目录下生成容器的 Bundle 目录，并且将会自动生成 '/etc/startup.sh' 文件并在其中配置命令 'shstack 200000'。
 
+以上 `create` 命令也支持命令行参数（适用于自动化脚本）:
+
+``` sh
+ecs create [options]  create bundle with options or start an interactive wizard. 
+
+  -h | --help     print this help document
+  -d directory    path to local OCI bundle directory to be created.
+  -a arch         CPU architect to use, defaults to 'noarch' if not set, check
+                  CPU Architect section for more information.
+  -p args         container process (entrypoint) and its arguments.
+  -j              if set, mount and use host JSRE files.
+  -o              if set, overwrite exsiting bundle directory if exist.
+
+CPU Architect
+  noarch, x86-64, arm64, arm, riscv64, mips64, ppc, loongarch
+
+Example
+  ecs create -d ./demo -p '/bin/javascript /apps/demo.js'
+```
+
 ### 拷贝文件
 
 当前，用户需要手动将必要的文件拷贝到容器 Bundle 内。
