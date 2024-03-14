@@ -1,0 +1,18 @@
+# noarch, x86-64, arm64, arm, riscv64, mips64, ppc, loongarch
+ARCH arm64
+
+MOUNT /bin/javascript /bin/javascript rx
+
+MOUNT /lib /lib rx
+
+MOUNT /qt /qt rx
+
+COPY ./app/HelloVsoa /apps/HelloVsoa/hello
+
+ENV PATH=/usr/bin:/bin:/usr/pkg/sbin:/sbin:/usr/local/bin
+
+ENV LD_LIBRARY_PATH=/qt/lib:/usr/lib:/lib:/usr/local/lib:/lib/jsre:/lib/vsoa
+
+WORKDIR /apps/HelloVsoa/
+
+CMD ./hello -a

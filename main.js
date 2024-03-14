@@ -24,25 +24,29 @@ const config = {
   create: {
     configTemplate: loadConfigTemplate('config.json5'),
     startup: { shstack: 200000 }
+  }, 
+  build: {
+    configTemplate: loadConfigTemplate('config.json5'),
+    startup: { shstack: 200000 }
   }
 }
 
 run()
 
-function run () {
+function run() {
   try {
     const parsedOptions = optparser.parseProcessArgv()
-  
+
     if (parsedOptions.$help) {
       return Commands.help()
     }
     if (parsedOptions.$version) {
       return Commands.version()
     }
-  
+
     if (parsedOptions.$cmd) {
       const cmd = parsedOptions.$cmd
-      const command =  Commands[cmd]
+      const command = Commands[cmd]
       if (command) {
         return command(parsedOptions.$argv, config[cmd])
       }
@@ -56,7 +60,7 @@ function run () {
   return Commands.help()
 }
 
-function loadConfigTemplate (json5) {
+function loadConfigTemplate(json5) {
   const loaded = fs.readFileSync(path.join(__dirname, json5))
   return JSON5.parse(loaded)
 }
