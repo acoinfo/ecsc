@@ -1,18 +1,23 @@
-# noarch, x86-64, arm64, arm, riscv64, mips64, ppc, loongarch
+# Edge Container Stack build script
+
+# OCI image config.json - platform.arch
+# possible values: noarch, x86-64, arm64, arm, riscv64, mips64, ppc, loongarch
+# more info: https://docs.acoinfo.com/cloudnative/manual/ecs/configuration.html
 ARCH arm64
 
+# mounts[]: mount host files into 
 MOUNT /bin/javascript /bin/javascript rx
-
-MOUNT /lib /lib rx
-
-MOUNT /qt /qt rx
+MOUNT /lib            /lib            rx
+MOUNT /qt             /qt             rx
 
 COPY ./app/HelloVsoa /apps/HelloVsoa/hello
 
+# process.env[]: environment variables
 ENV PATH=/usr/bin:/bin:/usr/pkg/sbin:/sbin:/usr/local/bin
+ENV LD_LIBRARY_PATH=/usr/lib:/lib:/usr/local/lib:/lib/jsre:/lib/vsoa:/qt/lib
 
-ENV LD_LIBRARY_PATH=/qt/lib:/usr/lib:/lib:/usr/local/lib:/lib/jsre:/lib/vsoa
+# process.cwd: application working directory
+WORKDIR /apps/HelloVsoa
 
-WORKDIR /apps/HelloVsoa/
-
+# process.args[]: commands to start application
 CMD ./hello -a
