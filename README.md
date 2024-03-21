@@ -93,3 +93,6 @@ For example, to package the 'demo' bundle created in step 1:
 # with 'demo:latest' as it name and tag, in current working directory
 ecsc pack ./demo
 ```
+>**Notice：**
+>
+>In addition to the above ecsc interactions, you can also use the Ecsfile tool to package images. For details, see[ Ecsfile User Guide ](./README-Ecsfile.md)。

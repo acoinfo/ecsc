@@ -24,6 +24,10 @@ const config = {
   create: {
     configTemplate: loadConfigTemplate('config.json5'),
     startup: { shstack: 200000 }
+  }, 
+  build: {
+    configTemplate: loadConfigTemplate('config.json5'),
+    startup: { shstack: 200000 }
   }
 }
 

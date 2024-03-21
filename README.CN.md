@@ -121,3 +121,7 @@ ecsc pack demo.tar demo x64_demo latest
 ```
 
 以上命令执行后，将在当前工作目录中生成 `demo.tar` 容器镜像包。
+
+>**注意：**
+>
+>除了通过上述 ecsc 交互的方式，还可通过 Ecsfile 工具进行镜像打包。具体使用请参考[ Ecsfile 使用说明](./README-Ecsfile.CN.md)。
