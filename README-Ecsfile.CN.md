@@ -67,7 +67,7 @@ CMD javascript ./hello/HelloWorld.js
 3. 用户使用如下的命令将需要的文件打包为 tar 包，并且会自动生成 Bundle 文件。
 
 ```bash
-ecsc build -t HelloWorld:latest -f /path/to/ecsfile
+ecsc build /path/to/ecsfile -t HelloWorld:latest
 ```
 
 以上 `build` 命令也支持命令行参数
@@ -78,7 +78,4 @@ ecs build [options]  build image with options.
   -h | --help     print this help document
   -f | --file     set ecsfile path
   -t | --tag      set image tag
-
-Example
-  ecs build -t apache:latest -f /path/to/ecsfile'
 ```

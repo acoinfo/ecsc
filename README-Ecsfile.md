@@ -67,7 +67,7 @@ This section uses the Ecsfile sample configuration as an example.
 3. You can use the following command to package the required files into tar files, and the bundle files will be automatically generated.
 
 ```bash
-ecsc build -t HelloWorld:latest -f /path/to/ecsfile
+ecsc build /path/to/ecsfile -t HelloWorld:latest
 ```
 
 The 'build' command above also supports command-line arguments
@@ -78,7 +78,4 @@ ecs build [options]  build image with options.
   -h | --help     print this help document
   -f | --file     set ecsfile path
   -t | --tag      set image tag
-
-Example
-  ecs build -t apache:latest -f /path/to/ecsfile'
 ```
