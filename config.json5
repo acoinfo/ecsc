@@ -25,7 +25,8 @@
         { path: '/dev/net/vnd', access: 'rw' }
       ],
       resources: {
-        cpu: { highestPrio: 160, lowestPrio: 250 },
+        cpu: { highestPrio: 160, lowestPrio: 250, defaultPrio: 200 },
+        itimer: { defaultPrio: 200 },
         memory: { kheapLimit: 2097152, memoryLimitMB: 512 },
         kernelObject: {
           threadLimit: 300,
