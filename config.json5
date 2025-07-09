@@ -3,8 +3,9 @@
     ociVersion: '1.0.0',
     root: { path: 'rootfs', readonly: false },
     mounts: [
-      { destination: '/qt', source: '/qt', options: [ 'rx' ] },
-      { destination: '/etc/lic', source: '/etc/lic', options: [ 'rw' ] }
+      { destination: '/etc/lic', source: '/etc/lic', options: [ 'ro' ] },
+      { destination: '/bin/uname', source: '/bin/uname', options: [ 'rx' ] },
+      { destination: '/bin/tar', source: '/bin/tar', options: [ 'rx' ] }
     ],
     process: {
       user: { uid: 0, gid: 0 },
@@ -13,7 +14,7 @@
         'LD_LIBRARY_PATH=/qt/lib:/usr/lib:/lib:/usr/local/lib:/lib/jsre:/lib/vsoa',
         'PATH=/usr/bin:/bin:/usr/pkg/sbin:/sbin:/usr/local/bin'
       ],
-      cwd: '/apps'
+      cwd: '/'
     },
     hostname: 'sylixos_ecs',
     platform: { os: 'sylixos', arch: 'arm64' },   // deprecated
@@ -25,25 +26,26 @@
         { path: '/dev/net/vnd', access: 'rw' }
       ],
       resources: {
-        cpu: { highestPrio: 160, lowestPrio: 250, defaultPrio: 200 },
+        affinity: [],
+        cpu: { highestPrio: 150, lowestPrio: 250, defaultPrio: 200 },
         itimer: { defaultPrio: 200 },
-        memory: { kheapLimit: 2097152, memoryLimitMB: 512 },
+        memory: { kheapLimit: 536870912, memoryLimitMB: 2048 },
         kernelObject: {
-          threadLimit: 300,
-          threadPoolLimit: 1,
-          eventLimit: 800,
-          eventSetLimit: 50,
-          partitionLimit: 5,
-          regionLimit: 5,
-          msgQueueLimit: 50,
-          timerLimit: 5,
-          rmsLimit: 5,
-          threadVarLimit: 2,
+          threadLimit: 4096,
+          threadPoolLimit: 32,
+          eventLimit: 32768,
+          eventSetLimit: 500,
+          partitionLimit: 6000,
+          regionLimit: 50,
+          msgQueueLimit: 8192,
+          timerLimit: 64,
+          rmsLimit: 32,
+          threadVarLimit: 16,
           posixMqueueLimit: 300,
           dlopenLibraryLimit: 50,
           xsiipcLimit: 100,
-          socketLimit: 50,
-          srtpLimit: 10,
+          socketLimit: 1024,
+          srtpLimit: 30,
           deviceLimit: 60
         },
         disk: { limitMB: 2048 }
@@ -59,8 +61,9 @@
         'debug',   'shell',    'll',
         'sync',    'ln',       'kill',
         'free',    'ifconfig', 'mems',
-        'env'
+        'env',     'rm',       'exit',
+        'mkdir',   'echo',     'mv'
       ],
-      network: { telnetdEnable: true, ftpdEnable: true }
+      network: { telnetdEnable: true, ftpdEnable: true, sshdEnable: false }
     }
   }
