@@ -102,6 +102,23 @@ test('optparser with spec of verifier', t => {
   t.end()
 })
 
+test('optparser with repeatable value verifier', t => {
+  const spec = { 
+    a: /^[a-z]/
+  }
+  const parse = s => parseString(s, spec)
+
+  let message = 'option "-a" requires an option value'
+  t.throws(() => parse('-a'), { message }, 'option "-a" is required')
+
+  t.throws(() => parse('-a a -a'), { message }, 'second option "-a" is required')
+
+  let argv = '-a a1 -a a2'
+  t.deepEqual(parse(argv), { $argv:[], a: ['a1', 'a2'] }, argv)
+
+  t.end()
+})
+
 test('optparser parseProcessArgv', t => {
   const procArgv = parseProcessArgv({ $cmd: false })
   t.ok(procArgv.$entry, `parseProcessArgv $entry ${procArgv.$entry}`)
@@ -120,7 +137,7 @@ test('optparser boundary conditions', t => {
 test('optparser mixed options and values', t => {
   const spec = { t: true, }
   t.deepEqual(parseString('foo a -t t1 b -t t2 c', spec),
-    { $argv: ['foo', 'a', 'b', 'c'], t: 't2' }, 'parseString("foo a -t t1 b -t t2 c")')
+    { $argv: ['foo', 'a', 'b', 'c'], t: ['t1','t2'] }, 'parseString("foo a -t t1 b -t t2 c")')
   t.end()
 })
 
